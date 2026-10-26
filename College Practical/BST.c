@@ -1,171 +1,45 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Create a new node
 struct Node {
     int data;
     struct Node *left, *right;
 };
 
-// Create node
-struct Node* create(int x) {
-    struct Node* n = malloc(sizeof(struct Node));
-
-    n->data = x;
-    n->left = NULL;
-    n->right = NULL;
-
-    return n;
-}
-
-// 1. INSERT
-struct Node* insert(struct Node* root, int x) {
-
-    if (root == NULL)
-        return create(x);
-
-    if (x < root->data)
-        root->left = insert(root->left, x);
-
-    else if (x > root->data)
-        root->right = insert(root->right, x);
-
+struct Node* insert(struct Node* root, int val) {
+    if (!root) {
+        struct Node* n = malloc(sizeof(struct Node));
+        n->data = val; n->left = n->right = NULL;
+        return n;
+    }
+    if (val < root->data) root->left = insert(root->left, val);
+    else if (val > root->data) root->right = insert(root->right, val);
     return root;
 }
 
-// 2. SEARCH
-int search(struct Node* root, int x) {
-
-    if (root == NULL)
-        return 0;
-
-    if (root->data == x)
-        return 1;
-
-    if (x < root->data)
-        return search(root->left, x);
-
-    return search(root->right, x);
+void inorder(struct Node* r) {
+    if (r) { inorder(r->left); printf("%d ", r->data); inorder(r->right); }
 }
 
-// 3. INORDER
-void inorder(struct Node* root) {
-
-    if (root != NULL) {
-        inorder(root->left);
-        printf("%d ", root->data);
-        inorder(root->right);
-    }
+void preorder(struct Node* r) {
+    if (r) { printf("%d ", r->data); preorder(r->left); preorder(r->right); }
 }
 
-// 4. PREORDER
-void preorder(struct Node* root) {
-
-    if (root != NULL) {
-        printf("%d ", root->data);
-        preorder(root->left);
-        preorder(root->right);
-    }
+void postorder(struct Node* r) {
+    if (r) { postorder(r->left); postorder(r->right); printf("%d ", r->data); }
 }
 
-// 5. POSTORDER
-void postorder(struct Node* root) {
-
-    if (root != NULL) {
-        postorder(root->left);
-        postorder(root->right);
-        printf("%d ", root->data);
-    }
-}
-
-// Find smallest node
-struct Node* minNode(struct Node* root) {
-
-    while (root->left != NULL)
-        root = root->left;
-
-    return root;
-}
-
-// 6. DELETE
-struct Node* deleteNode(struct Node* root, int x) {
-
-    if (root == NULL)
-        return NULL;
-
-    if (x < root->data)
-        root->left = deleteNode(root->left, x);
-
-    else if (x > root->data)
-        root->right = deleteNode(root->right, x);
-
-    else {
-
-        // No left child
-        if (root->left == NULL) {
-            struct Node* temp = root->right;
-            free(root);
-            return temp;
-        }
-
-        // No right child
-        if (root->right == NULL) {
-            struct Node* temp = root->left;
-            free(root);
-            return temp;
-        }
-
-        // Two children
-        struct Node* temp = minNode(root->right);
-
-        root->data = temp->data;
-
-        root->right = deleteNode(root->right, temp->data);
-    }
-
-    return root;
-}
-
-// MAIN
 int main() {
-
     struct Node* root = NULL;
-    int x;
-
-    // Insert
-    root = insert(root, 50);
-    root = insert(root, 30);
-    root = insert(root, 70);
-    root = insert(root, 20);
-    root = insert(root, 40);
-    root = insert(root, 60);
-    root = insert(root, 80);
-
-    // Search
-    x = 40;
-
-    if (search(root, x))
-        printf("40 Found\n");
-    else
-        printf("40 Not Found\n");
-
-    // Inorder
-    printf("Inorder: ");
-    inorder(root);
-
-    // Preorder
-    printf("\nPreorder: ");
-    preorder(root);
-
-    // Postorder
-    printf("\nPostorder: ");
-    postorder(root);
-
-    // Delete
-    root = deleteNode(root, 30);
-
-    printf("\nAfter deleting 30: ");
-    inorder(root);
-
+    int ch, val;
+    while (1) {
+        printf("\n1.Insert 2.Inorder 3.Preorder 4.Postorder 5.Exit\nChoice: ");
+        scanf("%d", &ch);
+        if (ch == 1) { printf("Val: "); scanf("%d", &val); root = insert(root, val); }
+        else if (ch == 2) { inorder(root); printf("\n"); }
+        else if (ch == 3) { preorder(root); printf("\n"); }
+        else if (ch == 4) { postorder(root); printf("\n"); }
+        else if (ch == 5) break;
+    }
     return 0;
-} 
+}
